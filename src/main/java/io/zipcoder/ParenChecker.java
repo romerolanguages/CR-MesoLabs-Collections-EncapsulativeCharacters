@@ -1,6 +1,7 @@
 package io.zipcoder;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,14 +11,18 @@ public class ParenChecker {
 
     private String inputExpression;
     private Stack<String> stack;
+    private EnumSet<ParenStrings> parenStrings;
+
 
     public ParenChecker() {
         this.stack = new Stack<String>();
+        this.parenStrings = EnumSet.allOf(ParenStrings.class);
     }
 
     public ParenChecker(String inputExpression) {
         this.inputExpression = inputExpression;
         this.stack = new Stack<String>();
+        this.parenStrings = EnumSet.allOf(ParenStrings.class);
     }
 
     public Stack<String> getStack() {
@@ -57,17 +62,42 @@ public class ParenChecker {
         return isLastCharCorrect;
     }
 
+    public void addOnlyParenStringsToStack(String input) {
+        String[] inputStringArray = input.split("");
+
+//        String correctStrings = "[(){}\\[\\]<>\"\']$";
+        String correctStrings = "[(){}\\[\\]<>]$";
+        Pattern correctStringsPattern = Pattern.compile(correctStrings);
+        System.out.println("String entering addOnlyParenStringsToStack: ");
+        System.out.println(input);
+
+        for (String string : inputStringArray) {
+            Matcher correctStringsMatcher = correctStringsPattern.matcher(string);
+            if (correctStringsMatcher.find()) {
+                stack.add(string);
+            }
+        }
+        System.out.println("Stack leaving addOnlyParenStringsToStack: ");
+        System.out.println(this.toString());
+    }
+
     public boolean areAllParensPaired(String input) {
         boolean areAllParensPaired = true;
+//        if (! (this.isFirstCharCorrect(input) && this.isLastCharCorrect(input)) ) {
+//            areAllParensPaired = false;
+//            return areAllParensPaired;
+//        }
 
-        String[] inputStringArray = input.split("");
-        this.stack.addAll(Arrays.asList(inputStringArray));
+        this.addOnlyParenStringsToStack(input);
+
+
+        System.out.println("Stack inside areAllParensPaired: ");
+        System.out.println(this.toString());
 
         for (int i = 0; i < stack.size() - 1; i++) {
+
+            // SQUIGGLY CHECK
             if (stack.get(i).equals("{")) {
-                if (stack.get(i + 1).equals("[") || stack.get(i + 1).equals("(")) {
-                    continue;
-                }
                 if (stack.get(i + 1).equals("}")) {
                     stack.remove(i);
                     stack.remove(i);
@@ -75,21 +105,17 @@ public class ParenChecker {
                     else i -= 2;
                     continue;
                 }
-                if (stack.get(i + 1).equals("]") || stack.get(i + 1).equals(")")) {
-                    break;
-                }
-                // Removing any other characters doesn't work right now.
-//                else {
-//                    stack.remove(i + 1);
-//                    i--;
+//                if (stack.get(i + 1).equals("[") || stack.get(i + 1).equals("(")) {
 //                    continue;
 //                }
+                if ( stack.get(i + 1).equals("]") || stack.get(i + 1).equals(")")
+                     || stack.get(i + 1).equals(">") ) {
+                    break;
+                }
             }
 
+            // BRACKET CHECK
             if (stack.get(i).equals("[")) {
-                if (stack.get(i + 1).equals("{") || stack.get(i + 1).equals("(")) {
-                    continue;
-                }
                 if (stack.get(i + 1).equals("]")) {
                     stack.remove(i);
                     stack.remove(i);
@@ -97,15 +123,17 @@ public class ParenChecker {
                     else i -= 2;
                     continue;
                 }
-                if (stack.get(i + 1).equals("}") || stack.get(i + 1).equals(")")) {
+//                if (stack.get(i + 1).equals("{") || stack.get(i + 1).equals("(")) {
+//                    continue;
+//                }
+                if ( stack.get(i + 1).equals("}") || stack.get(i + 1).equals(")")
+                     || stack.get(i + 1).equals(">") ) {
                     break;
                 }
             }
 
+            // PARENTHESIS CHECK
             if (stack.get(i).equals("(")) {
-                if (stack.get(i + 1).equals("{") || stack.get(i + 1).equals("[")) {
-                    continue;
-                }
                 if (stack.get(i + 1).equals(")")) {
                     stack.remove(i);
                     stack.remove(i);
@@ -113,20 +141,45 @@ public class ParenChecker {
                     else i -= 2;
                     continue;
                 }
-                if (stack.get(i + 1).equals("}") || stack.get(i + 1).equals("]")) {
+//                if (stack.get(i + 1).equals("{") || stack.get(i + 1).equals("[")) {
+//                    continue;
+//                }
+                if ( stack.get(i + 1).equals("}") || stack.get(i + 1).equals("]")
+                     || stack.get(i + 1).equals(">") ) {
                     break;
                 }
             }
-        }
+
+            // DIAMONDS CHECK
+            if (stack.get(i).equals("<")) {
+                if (stack.get(i + 1).equals(">")) {
+                    stack.remove(i);
+                    stack.remove(i);
+                    if (i == 0) i--;
+                    else i -= 2;
+                    continue;
+                }
+                if ( stack.get(i + 1).equals("}") || stack.get(i + 1).equals("]")
+                     || stack.get(i + 1).equals(")") ) {
+                    break;
+                }
+            }
+
+        } // end of for loop
 
         if (stack.size() != 0) {
             areAllParensPaired = false;
         }
         return areAllParensPaired;
+
+    }
+
+    public boolean checkStack() {
+        return false;
     }
 
     @Override
-    public String toString() {
+    public String toString () {
         StringBuilder sb = new StringBuilder();
         for (String string : stack) {
             sb.append(string);
@@ -134,19 +187,17 @@ public class ParenChecker {
         return sb.toString();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
         ParenChecker parenChecker = new ParenChecker();
 
-        String inputExpression = "{}{}{}{{}}";
+        String inputExpression = "<aaáaaaaa>{{}}{}{}{}{}";
         System.out.println("isInputLengthEven: " + parenChecker.isInputLengthEven(inputExpression));
         System.out.println("isFirstCharCorrect: " + parenChecker.isFirstCharCorrect(inputExpression));
         System.out.println("isLastCharCorrect: " + parenChecker.isLastCharCorrect(inputExpression));
         System.out.println();
-        System.out.printf("%25s", "areAllParensPaired: " + parenChecker.areAllParensPaired(inputExpression));
-        System.out.println();
-        System.out.printf("%20s", "original string: ");
-        System.out.println(inputExpression);
-        System.out.printf("%23s", "final string: " + parenChecker.toString());
+        System.out.println("areAllParensPaired: " + parenChecker.areAllParensPaired(inputExpression));
+        System.out.println("original String: " + inputExpression);
+        System.out.println("final Stack:     " + parenChecker.toString());
 
     }
 }
