@@ -2,6 +2,7 @@ package io.zipcoder;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -31,11 +32,10 @@ public class WC {
     }
 
     public void addWordsToLinkedHashMap() {
-//        System.out.println("test");
-
         while(si.hasNext()) {
             String[] words = si.next().split(DELIMITER);
             for (String word : words) {
+                word = word.toLowerCase();
                 if (linkedHashMap.get(word) == null) {
                     linkedHashMap.put(word, 1);
                 } else {
@@ -45,15 +45,40 @@ public class WC {
         }
     }
 
+    public String getWordCountInDescendingOrder() {
+        List<Entry<String, Integer>> wordCount = new ArrayList<>(linkedHashMap.entrySet());
+        StringBuilder sb = new StringBuilder();
+
+        Collections.sort(wordCount, new Comparator<Entry>() {
+            public int compare(Entry e1, Entry e2) {
+                if ( (int)e2.getValue() == (int)e1.getValue() ) {
+                    return 0;
+                } else if ( (int)e1.getValue() > (int)e2.getValue() ) {
+                    return -1;
+                } else
+                    return 1;
+            }
+        });
+
+        sb.append("Count = Word" + "\n");
+        for (Entry entry : wordCount) {
+            sb.append(entry.getValue() + " = " + entry.getKey() + "\n");
+        }
+
+        return sb.toString();
+    }
+
     public static void main(String[] args) {
 
         String inputExpression = "first second third fourth";
         WC wc = new WC(WC.class.getResource("/aeneid.txt").getFile());
         wc.addWordsToLinkedHashMap();
         wc.getLinkedHashMap();
-        for (Map.Entry entry : wc.getLinkedHashMap().entrySet()) {
-            System.out.println(entry.toString());
-        }
+//        for (Entry entry : wc.getLinkedHashMap().entrySet()) {
+//            System.out.println(entry.toString());
+//        }
+
+        System.out.println(wc.getWordCountInDescendingOrder());
 
     }
 }
