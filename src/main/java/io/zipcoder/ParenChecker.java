@@ -95,21 +95,6 @@ public class ParenChecker {
 
         for (int i = 0; i < stack.size() - 1; i++) {
 
-            // SQUIGGLY CHECK
-//            if (stack.get(i).equals("{")) {
-//                if (stack.get(i + 1).equals("}")) {
-//                    stack.remove(i);
-//                    stack.remove(i);
-//                    if (i == 0) i--;
-//                    else i -= 2;
-//                    continue;
-//                }
-//                if ( stack.get(i + 1).equals("]") || stack.get(i + 1).equals(")")
-//                     || stack.get(i + 1).equals(">") ) {
-//                    break;
-//                }
-//            }
-
             // PARENTHESIS CHECK
             if (stack.get(i).equals("(")) {
                 if (stack.get(i + 1).equals(")")) {
@@ -121,21 +106,6 @@ public class ParenChecker {
                 }
                 if ( stack.get(i + 1).equals("}") || stack.get(i + 1).equals("]")
                      || stack.get(i + 1).equals(">") ) {
-                    break;
-                }
-            }
-
-            // DOUBLE_QUOTE CHECK
-            if (stack.get(i).equals("\"")) {
-                if (stack.get(i + 1).equals("\"")) {
-                    stack.remove(i);
-                    stack.remove(i);
-                    if (i == 0) i--;
-                    else i -= 2;
-                    continue;
-                }
-                if ( stack.get(i + 1).equals("}") || stack.get(i + 1).equals("]")
-                     || stack.get(i + 1).equals(")") || stack.get(i + 1).equals(">") ) {
                     break;
                 }
             }
