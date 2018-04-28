@@ -21,14 +21,21 @@ public class WCTest {
         String[] wordsArray = wordsAsString.split("[a-zA-Z0-9]+");
         List<String> wordsArrayList = new ArrayList<String>(Arrays.asList(wordsArray));
         Iterator<String> wordsArrayListIterator = wordsArrayList.iterator();
-        wc = new WC(wordsArrayListIterator);
+
         // When
-        String actualFirstWord = "hold";
+        wc.addWordsToLinkedHashMap();
+        String actualFirstWord = wc.getLinkedHashMap().entrySet().iterator().next().getKey();
         // Then
+        Assert.assertEquals(expectedFirstWord, actualFirstWord);
     }
 
     @Test
-    public void createWordsArrayTest() {
+    public void addWordsToLinkedHashMapTest() {
+        // Given
+        int expectedCountOfString = 2;
+        String string = "first first third fourth";
+        // When
+        // Then
 
     }
 

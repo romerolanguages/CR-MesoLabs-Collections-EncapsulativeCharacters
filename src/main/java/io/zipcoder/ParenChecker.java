@@ -7,22 +7,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.*;
 
+// ASSESS1 - JPMC QUESTION 1
+
 public class ParenChecker {
 
     private String inputExpression;
     private Stack<String> stack;
-    private EnumSet<ParenStrings> parenStrings;
 
 
     public ParenChecker() {
         this.stack = new Stack<String>();
-        this.parenStrings = EnumSet.allOf(ParenStrings.class);
     }
 
     public ParenChecker(String inputExpression) {
         this.inputExpression = inputExpression;
         this.stack = new Stack<String>();
-        this.parenStrings = EnumSet.allOf(ParenStrings.class);
     }
 
     public Stack<String> getStack() {
@@ -62,10 +61,12 @@ public class ParenChecker {
         return isLastCharCorrect;
     }
 
+    // before adding correct parens to stack, delete all ":)" and ":("
     public void addOnlyParenStringsToStack(String input) {
         String[] inputStringArray = input.split("");
 
-        String correctStrings = "[(){}\\[\\]<>\"\']$";
+        String correctStrings = "[():]";
+//        String correctStrings = "[(){}\\[\\]<>\"\']";
         Pattern correctStringsPattern = Pattern.compile(correctStrings);
 //        System.out.println("String entering addOnlyParenStringsToStack: ");
 //        System.out.println(input);
@@ -95,34 +96,19 @@ public class ParenChecker {
         for (int i = 0; i < stack.size() - 1; i++) {
 
             // SQUIGGLY CHECK
-            if (stack.get(i).equals("{")) {
-                if (stack.get(i + 1).equals("}")) {
-                    stack.remove(i);
-                    stack.remove(i);
-                    if (i == 0) i--;
-                    else i -= 2;
-                    continue;
-                }
-                if ( stack.get(i + 1).equals("]") || stack.get(i + 1).equals(")")
-                     || stack.get(i + 1).equals(">") ) {
-                    break;
-                }
-            }
-
-            // BRACKET CHECK
-            if (stack.get(i).equals("[")) {
-                if (stack.get(i + 1).equals("]")) {
-                    stack.remove(i);
-                    stack.remove(i);
-                    if (i == 0) i--;
-                    else i -= 2;
-                    continue;
-                }
-                if ( stack.get(i + 1).equals("}") || stack.get(i + 1).equals(")")
-                     || stack.get(i + 1).equals(">") ) {
-                    break;
-                }
-            }
+//            if (stack.get(i).equals("{")) {
+//                if (stack.get(i + 1).equals("}")) {
+//                    stack.remove(i);
+//                    stack.remove(i);
+//                    if (i == 0) i--;
+//                    else i -= 2;
+//                    continue;
+//                }
+//                if ( stack.get(i + 1).equals("]") || stack.get(i + 1).equals(")")
+//                     || stack.get(i + 1).equals(">") ) {
+//                    break;
+//                }
+//            }
 
             // PARENTHESIS CHECK
             if (stack.get(i).equals("(")) {
@@ -139,21 +125,6 @@ public class ParenChecker {
                 }
             }
 
-            // DIAMONDS CHECK
-            if (stack.get(i).equals("<")) {
-                if (stack.get(i + 1).equals(">")) {
-                    stack.remove(i);
-                    stack.remove(i);
-                    if (i == 0) i--;
-                    else i -= 2;
-                    continue;
-                }
-                if ( stack.get(i + 1).equals("}") || stack.get(i + 1).equals("]")
-                     || stack.get(i + 1).equals(")") ) {
-                    break;
-                }
-            }
-
             // DOUBLE_QUOTE CHECK
             if (stack.get(i).equals("\"")) {
                 if (stack.get(i + 1).equals("\"")) {
@@ -165,21 +136,6 @@ public class ParenChecker {
                 }
                 if ( stack.get(i + 1).equals("}") || stack.get(i + 1).equals("]")
                      || stack.get(i + 1).equals(")") || stack.get(i + 1).equals(">") ) {
-                    break;
-                }
-            }
-
-            // SINGLE_QUOTE CHECK
-            if (stack.get(i).equals("\'")) {
-                if (stack.get(i + 1).equals("\'")) {
-                    stack.remove(i);
-                    stack.remove(i);
-                    if (i == 0) i--;
-                    else i -= 2;
-                    continue;
-                }
-                if ( stack.get(i + 1).equals("}") || stack.get(i + 1).equals("]")
-                        || stack.get(i + 1).equals(")") || stack.get(i + 1).equals(">") ) {
                     break;
                 }
             }
@@ -215,7 +171,7 @@ public class ParenChecker {
     public static void main(String[] args){
         ParenChecker parenChecker = new ParenChecker();
 
-        String inputExpression = "1918-203948-209{}";
+        String inputExpression = "i am sick today (:(()())";
         parenChecker.addOnlyParenStringsToStack(inputExpression);
         String cleanedInput = parenChecker.getStackElementsAsString();
         parenChecker.makeStackSizeZero();

@@ -69,16 +69,9 @@ public class WC {
     }
 
     public static void main(String[] args) {
-
         String inputExpression = "first second third fourth";
         WC wc = new WC(WC.class.getResource("/aeneid.txt").getFile());
         wc.addWordsToLinkedHashMap();
-        wc.getLinkedHashMap();
-//        for (Entry entry : wc.getLinkedHashMap().entrySet()) {
-//            System.out.println(entry.toString());
-//        }
-
         System.out.println(wc.getWordCountInDescendingOrder());
-
     }
 }
